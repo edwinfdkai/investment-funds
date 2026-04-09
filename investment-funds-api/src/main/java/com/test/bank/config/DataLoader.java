@@ -1,0 +1,42 @@
+package com.test.bank.config;
+
+import com.test.bank.model.Client;
+import com.test.bank.model.Fund;
+import com.test.bank.model.enums.NotificationPreference;
+import com.test.bank.repository.ClientRepository;
+import com.test.bank.repository.FundRepository;
+
+import java.math.BigDecimal;
+import lombok.RequiredArgsConstructor;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
+
+@Component
+@RequiredArgsConstructor
+public class DataLoader implements CommandLineRunner {
+
+    private final ClientRepository clientRepository;
+    private final FundRepository fundRepository;
+
+    @Override
+    public void run(String... args) {
+
+        Client client = new Client(
+                "1",
+                "Edwin Caicedo",
+                "edwinfdfull@gmail.com",
+                "+573054566127",
+                BigDecimal.valueOf(500000),
+                NotificationPreference.EMAIL.getValue()
+        );
+        System.out.println("Insertando datos en DynamoDB...");
+
+        clientRepository.save(client);
+
+        fundRepository.save(new Fund("1","PRU_TEST_PACTUAL_RECAUDADORA",BigDecimal.valueOf(75000L),"PRU"));
+        fundRepository.save(new Fund("2","PRU_TEST_PACTUAL_ECOPETROL",BigDecimal.valueOf(125000L),"PRU"));
+        fundRepository.save(new Fund("3","DEUDAPRIVADA",BigDecimal.valueOf(50000L),"TIC"));
+        fundRepository.save(new Fund("4","FDO-ACCIONES",BigDecimal.valueOf(250000L),"TIC"));
+        fundRepository.save(new Fund("5","PRU_TEST_PACTUAL_DINAMICA",BigDecimal.valueOf(100000L),"PRU"));
+    }
+}

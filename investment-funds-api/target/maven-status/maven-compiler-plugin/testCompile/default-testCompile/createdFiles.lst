@@ -1,0 +1,14 @@
+com\test\bank\service\FundServiceImplTest.class
+com\test\bank\controller\ClientSubscriptionControllerTest.class
+com\test\bank\service\SubscriptionNotifierImplTest.class
+com\test\bank\service\FundSubscriptionServiceImplTest.class
+com\test\bank\controller\FundControllerTest.class
+com\test\bank\service\SubscriptionValidatorTest.class
+com\test\bank\controller\TransactionControllerTest.class
+com\test\bank\service\SmsNotificationServiceTest.class
+com\test\bank\service\TransactionServiceTest.class
+com\test\bank\TestBankApplication.class
+com\test\bank\TestcontainersConfiguration.class
+com\test\bank\service\FundCancellationServiceImplTest.class
+com\test\bank\service\EmailNotificationServiceTest.class
+com\test\bank\config\RestExceptionHandlerTestConfig.class

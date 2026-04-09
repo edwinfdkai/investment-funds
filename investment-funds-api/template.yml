@@ -1,0 +1,112 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Infrastructure for Investment Funds API (DynamoDB + SNS + SES)
+
+Resources:
+
+  ### 🔹 DynamoDB Tables
+  ClientsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "${AWS::StackName}-clients"
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: clientId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: clientId
+          KeyType: HASH
+
+  FundsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "${AWS::StackName}-funds"
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: fundId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: fundId
+          KeyType: HASH
+
+  SubscriptionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "${AWS::StackName}-subscriptions"
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: clientId
+          AttributeType: S
+        - AttributeName: fundId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: clientId
+          KeyType: HASH
+        - AttributeName: fundId
+          KeyType: RANGE
+
+  TransactionsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub "${AWS::StackName}-transactions"
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: transactionId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: transactionId
+          KeyType: HASH
+
+  ### 🔹 SNS Topic
+  NotificationTopic:
+    Type: AWS::SNS::Topic
+    Properties:
+      TopicName: !Sub "${AWS::StackName}-notifications"
+
+  ### 🔹 IAM Role
+  AppExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      RoleName: !Sub "${AWS::StackName}-role"
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service:
+                - ec2.amazonaws.com
+                - ecs-tasks.amazonaws.com
+            Action:
+              - sts:AssumeRole
+
+      Policies:
+        - PolicyName: app-policy
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+
+              - Effect: Allow
+                Action:
+                  - dynamodb:*
+                Resource: "*"
+
+              - Effect: Allow
+                Action:
+                  - sns:Publish
+                Resource: "*"
+
+              - Effect: Allow
+                Action:
+                  - ses:SendEmail
+                  - ses:SendRawEmail
+                Resource: "*"
+
+Outputs:
+
+  ClientsTableName:
+    Value: !Ref ClientsTable
+
+  NotificationTopicArn:
+    Value: !Ref NotificationTopic
+
+  RoleArn:
+    Value: !GetAtt AppExecutionRole.Arn
